@@ -112,7 +112,7 @@ def header(cur=None):
     links = ''.join(
         f'<a href="/{k}/"{" aria-current=\"page\"" if k == cur else ""}>{esc(v[0])}</a>' for k, v in RUBRICS.items())
     return f'''<header class="site-head"><div class="wrap">
-<a class="logo" href="/"><b>НЕУГОДНИК</b><span>блог Аслана о пути, товариществе и книгах</span></a>
+<a class="logo" href="/"><b>НЕУГОДНИК</b><span>блог о пути, товариществе и книгах</span></a>
 <nav class="nav" aria-label="Разделы">{links}</nav>
 <a class="btn" href="{TG}">Присоединиться</a>
 </div></header>
@@ -146,9 +146,19 @@ def link_body(h, by_id):
     return h
 
 
+def pos(ph):
+    """Точка кадрирования для обрезки под карточку: вертикальные кадры держим ближе к верху,
+    чтобы не резать головы и заголовки слайдов. Можно задать вручную полем "pos" у фото."""
+    if ph.get('pos'):
+        return f' style="object-position:{ph["pos"]}"'
+    if ph['h'] > ph['w'] * 1.05:
+        return ' style="object-position:50% 30%"'
+    return ''
+
+
 def card(p, cls='card'):
     img = (f'<img src="{p["photos"][0]["src"]}" alt="" loading="lazy" width="{p["photos"][0]["w"]}" '
-           f'height="{p["photos"][0]["h"]}">' if p['photos'] else f'<div class="ph">{esc(p["title"])}</div>')
+           f'height="{p["photos"][0]["h"]}"{pos(p["photos"][0])}>' if p['photos'] else f'<div class="ph">{esc(p["title"])}</div>')
     return (f'<a class="{cls}" href="{url(p)}">{img}<span class="meta">{dmy(p)} · {esc(RUBRICS[p["rubric"]][0])}</span>'
             f'<span class="h3">{esc(p["title"])}</span><p>{esc(excerpt(p, 140))}</p></a>')
 
@@ -185,7 +195,7 @@ def build_post(p, posts, by_id):
     if len(p['photos']) > 1:
         out.append('<div class="gallery">' + ''.join(
             f'<a href="{ph["src"]}"><img src="{ph["src"]}" alt="{esc(p["title"])}, фото {k + 2}" loading="lazy" '
-            f'width="{ph["w"]}" height="{ph["h"]}"></a>' for k, ph in enumerate(p['photos'][1:])) + '</div>')
+            f'width="{ph["w"]}" height="{ph["h"]}"{pos(ph)}></a>' for k, ph in enumerate(p['photos'][1:])) + '</div>')
     if p.get('video'):
         out.append(f'<p class="note">В этом посте есть видео: <a href="{TG}/{p["id"]}">смотреть в Телеграме</a>.</p>')
     tags = ''.join(f'<a href="/{p["rubric"]}/">#{esc(t)}</a>' for t in p.get('tags', []))
@@ -258,7 +268,7 @@ def build_index(posts):
            'inLanguage': 'ru', 'author': {'@type': 'Person', 'name': 'Аслан'}}]
     descr = ('Личный блог Аслана: путь из деревни в Оренбургских степях до Москвы, товарищество, казаки, '
              'библиотека Сталина и крипторынок без глянца.')
-    page = [head('Неугодник: блог Аслана о пути, товариществе и книгах', descr, '/', fimg['src'] if fimg else None, ld),
+    page = [head('Неугодник: блог о пути, товариществе и книгах', descr, '/', fimg['src'] if fimg else None, ld),
             header(),
             f'''<section class="wrap hero">
 <div class="hero-text">
@@ -267,7 +277,7 @@ def build_index(posts):
 <p class="lead">Всю жизнь работал в тени: политтехнолог, чужие победы, ни одной личной страницы. Здесь мои истории по местам и периодам. Вперемешку стыд, смех и то, во что я верю.</p>
 <div class="row"><a class="btn btn-line" href="{url(posts[0])}">Читать с начала</a><a href="#novyy-mir" style="text-decoration:underline;font-family:var(--ui);font-weight:600;font-size:15px;padding:12px 6px">Что такое Новый Мiр</a></div>
 </div>
-<a class="feature" href="{url(feat)}">{f'<img src="{fimg["src"]}" alt="" width="{fimg["w"]}" height="{fimg["h"]}">' if fimg else ''}
+<a class="feature" href="{url(feat)}">{f'<img src="{fimg["src"]}" alt="" width="{fimg["w"]}" height="{fimg["h"]}"{pos(fimg)}>' if fimg else ''}
 <div><span class="meta">{dmy(feat)} · {esc(RUBRICS[feat["rubric"]][0])}</span><span class="h3">{esc(feat["title"])}</span><p>{esc(excerpt(feat, 170))}</p></div></a>
 </section>
 <section class="wrap" style="padding-bottom:56px" aria-labelledby="fresh">
@@ -300,10 +310,10 @@ def build_index(posts):
 <div class="col">
 <h3 class="h3" style="font-size:22px"><a href="/put/kodeks-tovarishchestva/">Кодекс товарищества</a></h3>
 <ol class="codex">
-<li><b>1</b><span><strong>Отсутствие скрытности между товарищами</strong><br>Между товарищами нет секретов, если это не государственная тайна или иная информация, охраняемая законом.</span></li>
-<li><b>2</b><span><strong>Честность и прямота</strong><br>Товарищи говорят правду друг другу — без недомолвок, искажений и манипуляций.</span></li>
-<li><b>3</b><span><strong>Безупречность в действии</strong><br>Главный принцип товарищества — безупречность во всех действиях: сделать всё, что можешь, и ещё немного сверх этого.</span></li>
-<li><b>4</b><span><strong>Приоритет товарищества</strong><br>Интересы товарища и товарищества выше личных интересов.</span></li>
+<li><b>1</b><span>Между товарищами секретов нет, если это не гостайна</span></li>
+<li><b>2</b><span>Товарищи всегда говорят правду, без недомолвок и умалчиваний. Честность</span></li>
+<li><b>3</b><span>Главный принцип товарищества - безупречность во всех действиях (сделать все, что можешь + 20%)</span></li>
+<li><b>4</b><span>Сам погибай, но товарища выручай. Интересы товарища выше своих собственных</span></li>
 </ol>
 </div>
 </div></section>''', FOOT]

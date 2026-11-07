@@ -34,7 +34,7 @@ a:hover{color:var(--red)}
 .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .feature{flex:1 1 460px;min-width:0;display:flex;flex-direction:column;background:var(--ink);color:var(--bg)}
 .feature:hover{color:var(--bg)}
-.feature img{width:100%;height:340px;object-fit:cover}
+.feature img{width:100%;height:380px;object-fit:cover}
 .feature div{padding:24px 28px 28px;display:flex;flex-direction:column;gap:10px}
 .feature .meta{color:#BDBDBD}
 .feature .h3{font-size:36px;color:var(--bg)}
@@ -78,9 +78,9 @@ figcaption{margin-top:8px;font-family:var(--ui);font-size:13px;color:var(--muted
 .body p{margin:0 0 22px}
 .body a{color:var(--red);text-decoration:underline;text-underline-offset:3px}
 .body a:hover{color:var(--red-dark)}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:8px 0 28px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:8px 0 28px;align-items:start}
 .gallery a{display:block}
-.gallery img{width:100%;height:220px;object-fit:cover}
+.gallery img{width:100%;height:auto}
 .note{font-family:var(--ui);font-size:15px;color:var(--muted);border-left:3px solid var(--line);padding-left:14px;margin:0 0 28px}
 .tags{display:flex;flex-wrap:wrap;gap:10px;font-family:var(--ui);font-size:15px;margin:8px 0 0}
 .tags a{border:1px solid var(--ink);padding:6px 12px}
