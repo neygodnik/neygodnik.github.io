@@ -139,6 +139,7 @@ FOOT = f'''</main>
 <span>© 2026 Неугодник · Аслан</span>
 <nav aria-label="Соцсети"><a href="{TG}">Телеграм</a><a href="{IG}">Инстаграм</a><a href="/feed.xml">RSS</a></nav>
 </div></footer>
+<script src="/assets/site.js" defer></script>
 </body>
 </html>
 '''
@@ -177,6 +178,24 @@ def card(p, cls='card'):
             f'<span class="h3">{esc(p["title"])}</span><p>{esc(excerpt(p, 140))}</p></a>')
 
 
+def carousel(p):
+    """Фото поста каруселью над текстом. Клик открывает просмотр на весь экран (assets/site.js)."""
+    ph = p['photos']
+    if not ph:
+        return ''
+    n = len(ph)
+    slides = ''.join(
+        f'<button class="car-slide" type="button" data-i="{k}" aria-label="Открыть фото {k + 1} из {n}">'
+        f'<img src="{x["src"]}" alt="{esc(p["title"])}{", фото " + str(k + 1) if n > 1 else ""}" '
+        f'width="{x["w"]}" height="{x["h"]}"{" loading=\"lazy\"" if k else ""}></button>' for k, x in enumerate(ph))
+    nav = ''
+    if n > 1:
+        nav = ('<button class="car-btn car-prev" type="button" aria-label="Предыдущее фото">‹</button>'
+               '<button class="car-btn car-next" type="button" aria-label="Следующее фото">›</button>'
+               f'<span class="car-count" aria-live="polite">1 / {n}</span>')
+    return f'<figure class="carousel{" car-single" if n == 1 else ""}" data-carousel><div class="car-track" style="--ar:{ph[0]["w"]}/{ph[0]["h"]}">{slides}</div>{nav}</figure>'
+
+
 def build_post(p, posts, by_id):
     rname = RUBRICS[p['rubric']][0]
     same = [q for q in posts if q['rubric'] == p['rubric']]
@@ -202,14 +221,8 @@ def build_post(p, posts, by_id):
 <p class="meta"><time datetime="{dt(p).isoformat()}">{dmy(p)}</time> · {minutes(p)} {plural(minutes(p), "минута", "минуты", "минут")} чтения · Аслан</p>
 </header>
 </div>''')
-    if photo:
-        out.append(f'<figure class="post-hero"><img src="{photo["src"]}" alt="{esc(p["title"])}" '
-                   f'width="{photo["w"]}" height="{photo["h"]}"></figure>')
+    out.append(carousel(p))
     out.append(f'<div class="narrow body">{link_body(p["html"], by_id)}')
-    if len(p['photos']) > 1:
-        out.append('<div class="gallery">' + ''.join(
-            f'<a href="{ph["src"]}"><img src="{ph["src"]}" alt="{esc(p["title"])}, фото {k + 2}" loading="lazy" '
-            f'width="{ph["w"]}" height="{ph["h"]}"{pos(ph)}></a>' for k, ph in enumerate(p['photos'][1:])) + '</div>')
     if p.get('video'):
         out.append(f'<p class="note">В этом посте есть видео: <a href="{TG}/{p["id"]}">смотреть в Телеграме</a>.</p>')
     tags = ''.join(f'<a href="/{p["rubric"]}/">#{esc(t)}</a>' for t in p.get('tags', []))
