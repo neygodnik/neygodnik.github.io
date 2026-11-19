@@ -42,7 +42,7 @@ def clean(raw):
     tags = [H.unescape(t) for t in re.findall(r'<a href="\?q=[^"]*">#([^<]+)</a>', h)]
     h = re.sub(r'<a href="\?q=[^"]*">#[^<]+</a>', '', h)
     h = re.sub(r'\s*onclick="[^"]*"', '', h)
-    h = re.sub(r'<a href="https://t\.me/neygodnik/(\d+)"[^>]*>', r'<a href="tg:\1">', h)
+    h = re.sub(r'<a href="https?://t\.me/neygodnik/(\d+)"[^>]*>', r'<a href="tg:\1">', h)
     h = re.sub(r'<b>', '<strong>', h).replace('</b>', '</strong>')
     h = re.sub(r'<br\s*/?>', '\n', h)
     parts = [p.strip() for p in re.split(r'\n\s*\n', h) if p.strip()]
